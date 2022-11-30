@@ -3,7 +3,7 @@ import requests
 from bs4 import BeautifulSoup
 import pprint
 
-res = requests.get('https://news.ycombinator.com/news')
+res = requests.get('https://news.ycombinator.com/news?p=2')
 soup = BeautifulSoup(res.text, 'html.parser')
 
 # print(soup.find(id="score_33788208"))
@@ -15,6 +15,10 @@ links = soup.select('a')
 subline = soup.select('.subtext')
 # print(links, votes)
 
+
+# crtete a sort function to sort the list  
+def sort_by_votes(hnlist):
+    return sorted(hnlist, key=lambda k:k['votes'], reverse=True)
 
 def createCustomNews(links, subline):
     h_news = []
@@ -29,13 +33,13 @@ def createCustomNews(links, subline):
         if len(vote): 
             # to replace points to empty 
             points = int(vote[0].getText().replace(' points', '')) 
-            if points > 99:  
+            if points > 99: 
                 print(points)
 
             #create here a dictionary to create a tile and link list 
             h_news.append({'title': title, 'links': href })
     
-    return h_news
+    return sort_by_votes(h_news)
 
 obj = createCustomNews(links, subline)
 pprint.pprint(obj)
