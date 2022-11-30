@@ -1,6 +1,7 @@
 # Here i will scraping data from hacker News
 import requests
 from bs4 import BeautifulSoup
+import pprint
 
 res = requests.get('https://news.ycombinator.com/news')
 soup = BeautifulSoup(res.text, 'html.parser')
@@ -11,7 +12,7 @@ soup = BeautifulSoup(res.text, 'html.parser')
 
 
 links = soup.select('a')
-subline = soup.select('.subline')
+subline = soup.select('.subtext')
 # print(links, votes)
 
 
@@ -19,22 +20,23 @@ def createCustomNews(links, subline):
     h_news = []
 
     for idx, item in enumerate(links):
-        title = links[idx].getText()
-        href = links[idx].get('href', None)
+        title = item.getText()
+        href = item.get('href', None)
         # points = votes[idx].getText()
 
         vote =subline[idx].select('.score')
         
         if len(vote): 
             # to replace points to empty 
-            points = int(vote[0].getText().replace(' points', ''))   
-            print(points)
+            points = int(vote[0].getText().replace(' points', '')) 
+            if points > 99:  
+                print(points)
 
-        #create here a dictionary to create a tile and link list 
-        h_news.append({'title': title, 'links': href})
+            #create here a dictionary to create a tile and link list 
+            h_news.append({'title': title, 'links': href })
     
     return h_news
 
-createCustomNews(links, subline)
-# print(obj)
+obj = createCustomNews(links, subline)
+pprint.pprint(obj)
 
